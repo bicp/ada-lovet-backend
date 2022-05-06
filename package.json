@@ -1,0 +1,15 @@
+{
+  "name": "ada-lovet-backend",
+  "version": "1.0.0",
+  "description": "Meetup app fpr women interested in technology",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Bianca Pimenta",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  }
+}
