@@ -19,8 +19,9 @@ let lastId = 0;
 // });
 
 app.get("/events", async (req, res) => {
-  const events = await Event.find({ userId: req.body.userId });
+  const events = await Event.find({ userId: req.query.id });
 
+  console.log("EVENTS", events);
   res.send(events);
   res.end();
 });
@@ -64,7 +65,7 @@ app.post("/login", async (req, res) => {
   console.log(result);
   if (result) {
     if (req.body.password === result.password) {
-      res.send(result);
+      res.send({ email: result.email, id: result._id });
     } else {
       res.status(401).send({ message: "Incorrect password!" });
     }
@@ -82,7 +83,7 @@ app.post("/signup", async (req, res) => {
     password: req.body.password,
   });
 
-  res.send(result);
+  res.send({ email: result.email, id: result._id });
 });
 
 async function start() {
