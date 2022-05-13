@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const { default: mongoose } = require("mongoose");
 const { Event } = require("./models/event");
+const { User } = require("./models/user");
 
 const app = express();
 
@@ -18,7 +19,7 @@ let lastId = 0;
 // });
 
 app.get("/events", async (req, res) => {
-  const events = await Event.find({});
+  const events = await Event.find({ userId: req.body.userId });
 
   res.send(events);
   res.end();
@@ -49,7 +50,6 @@ app.put("/events/:id", async (req, res) => {
 app.delete("/events/:id", async (req, res) => {
   //   let id = parseInt(req.params["id"]);
   //   events = events.filter((e) => e.id !== id);
-  console.log("jhdajajja", req.params.id);
 
   await Event.deleteOne({ _id: req.params.id });
 
@@ -57,18 +57,41 @@ app.delete("/events/:id", async (req, res) => {
   res.end();
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
+  const result = await User.findOne({
+    email: req.body.username,
+  });
+  console.log(result);
+  if (result) {
+    if (req.body.password === result.password) {
+      res.send(result);
+    } else {
+      res.status(401).send({ message: "Incorrect password!" });
+    }
+  } else {
+    res.status(401).send({ message: "User not found!" });
+  }
+});
+
+app.post("/signup", async (req, res) => {
   console.log(req.body);
-  res.send({});
+  console.log(req.body.username, req.body.password);
+
+  const result = await User.create({
+    email: req.body.username,
+    password: req.body.password,
+  });
+
+  res.send(result);
 });
 
 async function start() {
   try {
-    const new_url =
-      "mongodb+srv://ada:adalovet@cluster0.q2nkv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    // await mongoose.connect("mongodb://localhost:27017/ada-lovet");
+    // const new_url =
+    //   "mongodb+srv://ada:adalovet@cluster0.q2nkv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    await mongoose.connect("mongodb://localhost:27017/ada-lovet");
     console.log("HELOOOOOOOOO!!!!!");
-    await mongoose.connect(new_url);
+    // await mongoose.connect(new_url);
   } catch (e) {
     console.error("Cannot connect to DB!");
   }

@@ -4,7 +4,8 @@
   "description": "Meetup app fpr women interested in technology",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "Bianca Pimenta",
   "license": "ISC",
