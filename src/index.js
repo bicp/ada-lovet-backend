@@ -11,15 +11,8 @@ app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 const port = 4001;
 
-let events = [];
-let lastId = 0;
-
-// app.get("/", (req, res) => {
-// //   res.send("Hello World!");
-// });
-
 app.get("/events", async (req, res) => {
-  const events = await Event.find({ userId: req.query.id });
+  const events = await Event.find(req.query.id ? { userId: req.query.id } : {});
 
   console.log("EVENTS", events);
   res.send(events);
@@ -29,9 +22,6 @@ app.get("/events", async (req, res) => {
 app.post("/events", async (req, res) => {
   let content = req.body;
   console.log(content);
-  //   lastId += 1;
-  //   Object.assign(content, { id: lastId });
-  //   events.push(content);
 
   const result = await Event.create(content);
 
@@ -49,9 +39,6 @@ app.put("/events/:id", async (req, res) => {
 });
 
 app.delete("/events/:id", async (req, res) => {
-  //   let id = parseInt(req.params["id"]);
-  //   events = events.filter((e) => e.id !== id);
-
   await Event.deleteOne({ _id: req.params.id });
 
   res.status(200).send({});
@@ -62,7 +49,7 @@ app.post("/login", async (req, res) => {
   const result = await User.findOne({
     email: req.body.username,
   });
-  console.log(result);
+
   if (result) {
     if (req.body.password === result.password) {
       res.send({ email: result.email, id: result._id });
@@ -75,9 +62,6 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  console.log(req.body.username, req.body.password);
-
   const result = await User.create({
     email: req.body.username,
     password: req.body.password,
@@ -88,11 +72,7 @@ app.post("/signup", async (req, res) => {
 
 async function start() {
   try {
-    // const new_url =
-    //   "mongodb+srv://ada:adalovet@cluster0.q2nkv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
-    await mongoose.connect("mongodb://localhost:27017/ada-lovet");
-    console.log("HELOOOOOOOOO!!!!!");
-    // await mongoose.connect(new_url);
+    await mongoose.connect(process.env.DB_URL);
   } catch (e) {
     console.error("Cannot connect to DB!");
   }
@@ -103,8 +83,3 @@ async function start() {
 }
 
 start();
-
-// get R
-// post C
-// put U
-// delete D
